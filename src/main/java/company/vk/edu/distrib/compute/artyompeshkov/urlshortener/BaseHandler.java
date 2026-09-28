@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
 import static company.vk.edu.distrib.compute.artyompeshkov.urlshortener.HttpUtils.NO_BODY;
 
 abstract class BaseHandler implements HttpHandler {
+    protected static final String GET = "GET";
+    protected static final String POST = "POST";
+    protected static final String PUT = "PUT";
+    protected static final String DELETE = "DELETE";
     private static final int HTTP_UNPROCESSABLE = 422;
     private static final Logger log = LoggerFactory.getLogger(BaseHandler.class);
 
@@ -25,7 +29,7 @@ abstract class BaseHandler implements HttpHandler {
             } catch (NoSuchElementException e) {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, NO_BODY);
             } catch (Exception e) {
-                log.error("Failed to handle {} {}", exchange.getRequestMethod(), exchange.getRequestURI(), e);
+                log.error("Failed to handle request", e);
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, NO_BODY);
             }
         }

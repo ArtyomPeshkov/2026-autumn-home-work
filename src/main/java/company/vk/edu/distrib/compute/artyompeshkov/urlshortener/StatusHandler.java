@@ -13,8 +13,8 @@ class StatusHandler extends BaseHandler {
 
     @Override
     protected void doHandle(HttpExchange exchange) throws IOException {
-        if (!"GET".equals(exchange.getRequestMethod())) {
-            sendMethodNotAllowed(exchange, "GET");
+        if (!GET.equals(exchange.getRequestMethod())) {
+            sendMethodNotAllowed(exchange, GET);
             return;
         }
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, NO_BODY);

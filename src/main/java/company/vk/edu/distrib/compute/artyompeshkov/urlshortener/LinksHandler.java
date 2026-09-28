@@ -46,8 +46,8 @@ class LinksHandler extends BaseHandler {
     }
 
     private void handleCreate(HttpExchange exchange) throws IOException {
-        if (!"POST".equals(exchange.getRequestMethod())) {
-            sendMethodNotAllowed(exchange, "POST");
+        if (!POST.equals(exchange.getRequestMethod())) {
+            sendMethodNotAllowed(exchange, POST);
             return;
         }
         createLink(exchange);
@@ -55,9 +55,9 @@ class LinksHandler extends BaseHandler {
 
     private void handleIndividualOps(HttpExchange exchange, LinkId id) throws IOException {
         switch (exchange.getRequestMethod()) {
-            case "GET" -> getLink(exchange, id);
-            case "PUT" -> updateLink(exchange, id);
-            case "DELETE" -> deleteLink(exchange, id);
+            case GET -> getLink(exchange, id);
+            case PUT -> updateLink(exchange, id);
+            case DELETE -> deleteLink(exchange, id);
             default -> sendMethodNotAllowed(exchange, "GET, PUT, DELETE");
         }
     }

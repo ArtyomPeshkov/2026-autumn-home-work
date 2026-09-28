@@ -21,8 +21,8 @@ class UsersHandler extends BaseHandler {
 
     @Override
     protected void doHandle(HttpExchange exchange) throws IOException {
-        if (!"POST".equals(exchange.getRequestMethod())) {
-            sendMethodNotAllowed(exchange, "POST");
+        if (!POST.equals(exchange.getRequestMethod())) {
+            sendMethodNotAllowed(exchange, POST);
             return;
         }
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
