@@ -13,15 +13,20 @@ final class HttpUtils {
     }
 
     static void sendText(HttpExchange exchange, int statusCode, String text) throws IOException {
-        byte[] body = text.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "text/html; charset=utf-8");
+        byte[] body = text.getBytes(StandardCharsets.UTF_8);
         exchange.sendResponseHeaders(statusCode, body.length);
         exchange.getResponseBody().write(body);
     }
-
+    
     static void sendMethodNotAllowed(HttpExchange exchange, String allowedMethods) throws IOException {
         exchange.getResponseHeaders().set("Allow", allowedMethods);
         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, NO_BODY);
+    }
+
+    static void sendRedirect(HttpExchange exchange, String location) throws IOException {
+        exchange.getResponseHeaders().set("Location", location);
+        exchange.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_PERM, NO_BODY);
     }
 
     static void sendUnauthorized(HttpExchange exchange) throws IOException {

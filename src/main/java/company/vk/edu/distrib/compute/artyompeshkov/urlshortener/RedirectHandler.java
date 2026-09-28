@@ -1,13 +1,12 @@
 package company.vk.edu.distrib.compute.artyompeshkov.urlshortener;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
 import com.sun.net.httpserver.HttpExchange;
 import company.vk.edu.distrib.compute.Dao;
 
-import static company.vk.edu.distrib.compute.artyompeshkov.urlshortener.HttpUtils.NO_BODY;
 import static company.vk.edu.distrib.compute.artyompeshkov.urlshortener.HttpUtils.sendMethodNotAllowed;
+import static company.vk.edu.distrib.compute.artyompeshkov.urlshortener.HttpUtils.sendRedirect;
 
 class RedirectHandler extends BaseHandler {
     static final String PATH = "/";
@@ -25,7 +24,6 @@ class RedirectHandler extends BaseHandler {
             sendMethodNotAllowed(exchange, GET);
             return;
         }
-        exchange.getResponseHeaders().set("Location", links.get(id.value()));
-        exchange.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_PERM, NO_BODY);
+        sendRedirect(exchange, links.get(id.value()));
     }
 }
