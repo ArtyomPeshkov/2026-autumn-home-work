@@ -48,7 +48,7 @@ final class KafkaUtils {
         worker.interrupt();
         boolean interrupted = Thread.interrupted();
         try {
-            if (worker.isAlive() && !worker.join(STOP_TIMEOUT)) {
+            if (worker.isAlive() && !worker.join(STOP_TIMEOUT) && log.isWarnEnabled()) {
                 log.warn("Worker {} is still finishing its current operation", worker.getName());
             }
         } catch (InterruptedException e) {

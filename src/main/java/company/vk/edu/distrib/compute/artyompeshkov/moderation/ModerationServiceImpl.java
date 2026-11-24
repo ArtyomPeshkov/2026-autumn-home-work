@@ -60,10 +60,10 @@ class ModerationServiceImpl implements ModerationService {
         }
         try {
             producer.send(response).get();
-        } catch (InterruptedException | ExecutionException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new CompletionException(e);
+        } catch (ExecutionException e) {
             throw new CompletionException(e);
         }
     }
@@ -77,13 +77,14 @@ class ModerationServiceImpl implements ModerationService {
     }
 
     private static List<String> loadBannedWords() throws IOException {
-        InputStream stream = ModerationServiceImpl.class.getResourceAsStream("/moderation/banned_words.txt");
-        if (stream == null) {
-            throw new IOException("Missing moderation dictionary");
-        }
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
-            return reader.lines().map(String::trim).filter(word -> !word.isEmpty())
-                    .map(word -> word.toLowerCase(Locale.ROOT)).toList();
+        try (InputStream stream = ModerationServiceImpl.class.getResourceAsStream("/moderation/banned_words.txt")) {
+            if (stream == null) {
+                throw new IOException("Missing moderation dictionary");
+            }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                return reader.lines().map(String::trim).filter(word -> !word.isEmpty())
+                        .map(word -> word.toLowerCase(Locale.ROOT)).toList();
+            }
         }
     }
 }

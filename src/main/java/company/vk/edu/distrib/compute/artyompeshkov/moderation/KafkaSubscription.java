@@ -63,9 +63,7 @@ final class KafkaSubscription implements AutoCloseable {
                     if (!running.get()) {
                         return;
                     }
-                    handler.accept(record);
-                    TopicPartition partition = new TopicPartition(record.topic(), record.partition());
-                    consumer.commitSync(Map.of(partition, new OffsetAndMetadata(record.offset() + 1)));
+                    processRecord(consumer, record);
                 }
             }
         } finally {
@@ -78,6 +76,12 @@ final class KafkaSubscription implements AutoCloseable {
                 }
             }
         }
+    }
+
+    private void processRecord(KafkaConsumer<String, byte[]> consumer, ConsumerRecord<String, byte[]> record) {
+        handler.accept(record);
+        TopicPartition partition = new TopicPartition(record.topic(), record.partition());
+        consumer.commitSync(Map.of(partition, new OffsetAndMetadata(record.offset() + 1)));
     }
 
     @Override

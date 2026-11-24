@@ -49,19 +49,14 @@ public class LinkModeration implements AutoCloseable {
 
     @SuppressWarnings("PMD.UseTryWithResources")
     private void publishPending() {
-        LinkCreatedEvent pending = null;
         try {
+            LinkCreatedEvent pending = pendingLinks.take();
             while (running.get()) {
                 try {
-                    if (pending == null) {
-                        pending = pendingLinks.take();
-                    }
                     KafkaProducer<String, byte[]> producer = KafkaUtils.producer(bootstrapServers);
                     try {
                         while (running.get()) {
-                            producer.send(new ProducerRecord<>(KafkaUtils.CREATED_TOPIC,
-                                    pending.id(), EventCodec.encode(pending))).get();
-                            pending = null;
+                            sendEvent(producer, pending);
                             pending = pendingLinks.take();
                         }
                     } finally {
@@ -77,6 +72,11 @@ public class LinkModeration implements AutoCloseable {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    private static void sendEvent(KafkaProducer<String, byte[]> producer, LinkCreatedEvent event)
+            throws InterruptedException, ExecutionException {
+        producer.send(new ProducerRecord<>(KafkaUtils.CREATED_TOPIC, event.id(), EventCodec.encode(event))).get();
     }
 
     private void applyResult(ConsumerRecord<String, byte[]> record) {
